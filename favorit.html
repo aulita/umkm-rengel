@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UMKM Kecamatan - Favorit</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      body {
+        background: #f9fafb;
+        color: #333;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      ul {
+        list-style: none;
+      }
+
+      /* Header */
+      header {
+        background: #bcbcbc;
+        color: #fff;
+        padding: 0.8rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-text {
+        font-size: 20px;
+        font-weight: bold;
+        color: #2c3e50; /* Ganti warna sesuai keinginan, ini contoh abu gelap */
+      }
+
+      .logo img {
+        height: 40px;
+        margin-right: 10px;
+      }
+
+      nav {
+        display: flex;
+        gap: 2rem;
+      }
+      nav a {
+        color: #fff;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+      nav a:hover,
+      nav a.active {
+        color: #0e0746;
+      }
+
+      /* Hamburger */
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+      }
+      .hamburger div {
+        width: 25px;
+        height: 3px;
+        background: #fff;
+        border-radius: 2px;
+      }
+
+      /* Mobile nav */
+      @media (max-width: 768px) {
+        nav {
+          position: fixed;
+          top: 60px;
+          right: -100%;
+          background: #bcbcbc;
+          height: calc(100vh - 60px);
+          width: 220px;
+          flex-direction: column;
+          padding: 1rem;
+          gap: 1.5rem;
+          transition: right 0.3s ease;
+          border-radius: 0 0 0 10px;
+          z-index: 999;
+        }
+        nav.active {
+          right: 0;
+        }
+        .hamburger {
+          display: flex;
+        }
+      }
+      .products {
+        display: grid;
+        gap: 1.5rem;
+        padding: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        flex-grow: 1;
+      }
+      .product-card {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+      }
+      .product-card img {
+        width: 100%;
+        height: 190px;
+        object-fit: cover;
+        border-bottom: 1px solid #eee;
+      }
+      .product-info {
+        padding: 1rem;
+        flex-grow: 1;
+      }
+      .product-name {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #131358;
+        margin-bottom: 0.3rem;
+      }
+      .product-desc {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 0.7rem;
+      }
+      .product-price {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #ff6600;
+      }
+      /* Footer */
+      footer {
+        background: #bcbcbc;
+        color: #0e0746;
+        text-align: center;
+        padding: 1rem 2rem;
+        font-size: 0.9rem;
+        margin-top: auto;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <img src="img/logo.png" alt="Logo Kecamatan" />
+        <span class="logo-text">UMKM Kecamatan Rengel</span>
+      </div>
+      <nav>
+        <a href="index.html">Produk</a>
+        <a href="about.html">Tentang</a>
+        <a href="favorit.html" class="active">Favorit</a>
+        <a href="kontak.html">Kontak</a>
+      </nav>
+      <div
+        class="hamburger"
+        id="hamburger"
+        aria-label="Toggle menu"
+        role="button"
+        tabindex="0"
+      >
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </header>
+
+    <main
+      class="products"
+      id="favoriteList"
+      aria-live="polite"
+      aria-label="Daftar produk favorit"
+    ></main>
+
+    <footer>&copy; 2025 UMKM Kecamatan Rengel. All rights reserved.</footer>
+
+    <script src="data-produk.js"></script>
+    <script>
+      function getFavorites() {
+        return JSON.parse(localStorage.getItem("favorites")) || [];
+      }
+
+      function removeFavorite(id) {
+        const favorites = getFavorites().filter((fid) => fid !== id);
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+      }
+
+      function displayFavoriteProducts() {
+        const container = document.getElementById("favoriteList");
+        container.innerHTML = "";
+
+        const favorites = getFavorites();
+        const favoriteProducts = products.filter((product) =>
+          favorites.includes(product.id)
+        );
+
+        if (favoriteProducts.length === 0) {
+          container.innerHTML = "<p>Belum ada produk favorit.</p>";
+          return;
+        }
+
+        favoriteProducts.forEach((product) => {
+          const card = document.createElement("article");
+          card.className = "product-card";
+
+          const img = document.createElement("img");
+          img.src = product.image;
+          img.alt = product.name;
+
+          const info = document.createElement("div");
+          info.className = "product-info";
+
+          const name = document.createElement("h3");
+          name.textContent = product.name;
+          name.className = "product-name";
+
+          const desc = document.createElement("p");
+          desc.textContent = product.description;
+          desc.className = "product-desc";
+
+          const price = document.createElement("p");
+          price.textContent = product.price;
+          price.className = "product-price";
+
+          const removeBtn = document.createElement("button");
+          removeBtn.textContent = "Hapus dari Favorit";
+          removeBtn.style.marginTop = "10px";
+          removeBtn.style.background = "#dc3545";
+          removeBtn.style.color = "white";
+          removeBtn.style.border = "none";
+          removeBtn.style.padding = "8px 12px";
+          removeBtn.style.borderRadius = "6px";
+          removeBtn.style.cursor = "pointer";
+
+          removeBtn.addEventListener("click", () => {
+            removeFavorite(product.id);
+            displayFavoriteProducts();
+          });
+
+          info.appendChild(name);
+          info.appendChild(desc);
+          info.appendChild(price);
+          info.appendChild(removeBtn);
+
+          card.appendChild(img);
+          card.appendChild(info);
+          container.appendChild(card);
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const menuToggle = document.getElementById("hamburger");
+        const navMenu = document.querySelector("nav");
+        if (menuToggle && navMenu) {
+          menuToggle.addEventListener("click", () => {
+            navMenu.classList.toggle("active");
+          });
+        }
+
+        displayFavoriteProducts();
+      });
+    </script>
+  </body>
+</html>

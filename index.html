@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UMKM Kecamatan - Produk</title>
+    <style>
+      /* Modal styles */
+      .modal {
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 12px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 8px 24px rgb(0 0 0 / 0.2);
+        padding: 1.5rem 2rem 2rem 2rem;
+        position: relative;
+        animation: fadeInUp 0.3s ease forwards;
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .close-button:hover {
+        color: #333;
+      }
+      #modal-title {
+        margin-top: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #222;
+      }
+      #modal-description {
+        margin: 1rem 0;
+        font-size: 1rem;
+        line-height: 1.4;
+        color: #444;
+      }
+      #modal-price {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #00875a;
+      }
+      /* Reset & base */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      body {
+        background: #f9fafb;
+        color: #333;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      ul {
+        list-style: none;
+      }
+
+      /* Header */
+      header {
+        background: #bcbcbc;
+        color: #fff;
+        padding: 0.8rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-text {
+        font-size: 20px;
+        font-weight: bold;
+        color: #2c3e50; /* Ganti warna sesuai keinginan, ini contoh abu gelap */
+      }
+
+      .logo img {
+        height: 40px;
+        margin-right: 10px;
+      }
+
+      nav {
+        display: flex;
+        gap: 2rem;
+      }
+      nav a {
+        color: #fff;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+      nav a:hover,
+      nav a.active {
+        color: #0e0746;
+      }
+
+      /* Hamburger */
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+      }
+      .hamburger div {
+        width: 25px;
+        height: 3px;
+        background: #ffffff;
+        border-radius: 2px;
+      }
+
+      /* Mobile nav */
+      @media (max-width: 768px) {
+        nav {
+          position: fixed;
+          top: 60px;
+          right: -100%;
+          background: #bcbcbc;
+          height: calc(100vh - 60px);
+          width: 220px;
+          flex-direction: column;
+          padding: 1rem;
+          gap: 1.5rem;
+          transition: right 0.3s ease;
+          border-radius: 0 0 0 10px;
+          z-index: 999;
+        }
+        nav.active {
+          right: 0;
+        }
+        .hamburger {
+          display: flex;
+        }
+      }
+
+      /* Search box */
+      .search-container {
+        display: flex;
+        align-items: center;
+        width: 90%; /* Menggunakan persentase agar responsif */
+        max-width: 1000px; /* Lebih panjang dari sebelumnya */
+        margin: 20px auto;
+        padding: 8px 16px;
+        background-color: #dcdcdc; /* Warna abu-abu sedang */
+        border-radius: 28px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .search-container input[type="text"] {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 18px;
+        padding: 10px;
+        color: #333;
+      }
+
+      .search-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        color: #444;
+        transition: color 0.3s ease;
+      }
+
+      .search-button:hover {
+        color: #000;
+      }
+
+      /* Container grid responsif */
+      #product-list {
+        display: grid;
+        gap: 1.5rem;
+        padding: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        justify-items: center;
+      }
+
+      /* Card produk */
+      .product-card {
+        width: 100%;
+        max-width: 260px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+      }
+
+      /* Gambar produk */
+      .product-card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        transition: transform 0.3s ease, filter 0.3s ease;
+        position: relative;
+        z-index: 0;
+      }
+
+      .product-card:hover img {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+      }
+
+      /* Info produk */
+      .product-info {
+        padding: 12px;
+      }
+
+      .product-name {
+        font-size: 1rem;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+
+      .product-desc {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 8px;
+        height: 38px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .product-price {
+        font-size: 0.95rem;
+        color: orange;
+        font-weight: bold;
+      }
+
+      .product-card {
+        position: relative; /* penting agar ❤️ bisa absolute di dalam */
+      }
+
+      /* Make sure the close button cursor is default so it doesn't show pointer */
+      #close-modal {
+        cursor: default;
+      }
+
+      /* You can expand to cover other possibilities such as class "close-btn" */
+      .close-btn {
+        cursor: pointer;
+      }
+
+      /* Modal styles */
+      .modal {
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 12px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 8px 24px rgb(0 0 0 / 0.2);
+        padding: 1.5rem 2rem 2rem 2rem;
+        position: relative;
+        animation: fadeInUp 0.3s ease forwards;
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .close-button:hover {
+        color: #333;
+      }
+      #modal-title {
+        margin-top: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #222;
+      }
+      #modal-description {
+        margin: 1rem 0;
+        font-size: 1rem;
+        line-height: 1.4;
+        color: #444;
+      }
+      #modal-price {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #00875a;
+      }
+
+      /* Favorite icon */
+      .favorite-icon {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 22px;
+        color: #ccc;
+        background-color: white;
+        border-radius: 50%;
+        padding: 6px;
+        cursor: pointer;
+        z-index: 20;
+        user-select: none;
+        pointer-events: auto;
+        transition: color 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .favorite-icon.favorited {
+        color: red;
+      }
+
+      /* Footer */
+      footer {
+        background: #bcbcbc;
+        color: #0e0746;
+        text-align: center;
+        padding: 1rem 2rem;
+        font-size: 0.9rem;
+        margin-top: auto;
+        user-select: none;
+      }
+
+      /* WhatsApp fixed icon */
+      .whatsapp-fixed {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 60px;
+        height: 60px;
+        background-color: #25d366; /* Warna hijau WhatsApp */
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        transition: transform 0.3s ease;
+      }
+
+      .whatsapp-fixed:hover {
+        transform: scale(1.1);
+      }
+
+      .whatsapp-fixed .whatsapp-icon {
+        width: 30px;
+        height: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <img src="img/logo.png" alt="Logo Kecamatan" />
+        <span class="logo-text">UMKM Kecamatan Rengel</span>
+      </div>
+
+      <nav>
+        <a href="index.html" class="active">Produk</a>
+        <a href="about.html">Tentang</a>
+        <a href="favorit.html">Favorit</a>
+        <a href="kontak.html">Kontak</a>
+      </nav>
+
+      <div
+        class="hamburger"
+        id="hamburger"
+        aria-label="Toggle menu"
+        role="button"
+        tabindex="0"
+      >
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </header>
+
+    <section class="search-container">
+      <input
+        type="text"
+        placeholder="Cari produk UMKM..."
+        id="searchInput"
+        aria-label="Search products"
+      />
+      <button type="button" class="search-button" aria-label="Search">
+        🔍
+      </button>
+    </section>
+
+    <main class="products" id="productList" aria-live="polite">
+      <div id="product-list" class="product-container"></div>
+
+      <!-- MODAL PRODUK DETAIL -->
+      <div id="product-modal" class="modal" style="display: none">
+        <div class="modal-content">
+          <span class="close-button" onclick="closeModal()">&times;</span>
+          <h2 id="modal-title">Judul Produk</h2>
+          <img
+            id="modal-image"
+            src=""
+            alt=""
+            style="
+              width: 100%;
+              height: auto;
+              border-radius: 8px;
+              margin-top: 10px;
+            "
+          />
+          <p id="modal-description" style="margin-top: 10px"></p>
+          <p
+            id="modal-full-description"
+            style="font-style: italic; color: #555"
+          ></p>
+          <p id="modal-price" style="font-weight: bold; color: #00875a"></p>
+        </div>
+      </div>
+    </main>
+
+    <footer>&copy; 2025 UMKM Kecamatan Rengel. All rights reserved.</footer>
+
+    <!-- SCRIPT -->
+    <script src="data-produk.js"></script>
+    <script>
+      function createProductCard(product, isFavorited) {
+        const card = document.createElement("article");
+        card.className = "product-card";
+
+        const favIcon = document.createElement("span");
+        favIcon.className = "favorite-icon";
+        favIcon.innerHTML = "&#10084;";
+        if (isFavorited) favIcon.classList.add("favorited");
+
+        favIcon.addEventListener("click", (e) => {
+          e.stopPropagation(); // Jangan buka modal
+          toggleFavoriteLocal(product.id, favIcon);
+        });
+
+        const img = document.createElement("img");
+        img.src = product.image;
+        img.alt = product.name;
+
+        const info = document.createElement("div");
+        info.className = "product-info";
+
+        const name = document.createElement("h3");
+        name.className = "product-name";
+        name.textContent = product.name;
+
+        const desc = document.createElement("p");
+        desc.className = "product-desc";
+        desc.textContent = product.description;
+
+        const price = document.createElement("p");
+        price.className = "product-price";
+        price.textContent = product.price;
+
+        info.appendChild(name);
+        info.appendChild(desc);
+        info.appendChild(price);
+
+        card.appendChild(favIcon);
+        card.appendChild(img);
+        card.appendChild(info);
+
+        card.addEventListener("click", () => {
+          openModal(product);
+        });
+
+        return card;
+      }
+
+      function toggleFavoriteLocal(productId, icon) {
+        let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+        const index = favorites.indexOf(productId);
+
+        if (index !== -1) {
+          favorites.splice(index, 1);
+          icon.classList.remove("favorited");
+        } else {
+          favorites.push(productId);
+          icon.classList.add("favorited");
+        }
+
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+      }
+
+      function getFavorites() {
+        return JSON.parse(localStorage.getItem("favorites")) || [];
+      }
+
+      function displayProducts() {
+        const container = document.getElementById("product-list");
+        container.innerHTML = "";
+        const favorites = getFavorites();
+        products.forEach((product) => {
+          const isFav = favorites.includes(product.id);
+          const card = createProductCard(product, isFav);
+          container.appendChild(card);
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const menuToggle = document.getElementById("hamburger");
+        const navMenu = document.querySelector("nav");
+
+        if (menuToggle && navMenu) {
+          menuToggle.addEventListener("click", () => {
+            navMenu.classList.toggle("active");
+          });
+        }
+
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) {
+          searchInput.addEventListener("input", () => {
+            const keyword = searchInput.value.toLowerCase();
+            const cards = document.querySelectorAll(".product-card");
+            cards.forEach((card) => {
+              const title = card
+                .querySelector(".product-name")
+                .textContent.toLowerCase();
+              card.style.display = title.includes(keyword) ? "" : "none";
+            });
+          });
+        }
+
+        displayProducts();
+      });
+      function openModal(product) {
+        const modal = document.getElementById("product-modal");
+        const title = document.getElementById("modal-title");
+        const image = document.getElementById("modal-image");
+        const description = document.getElementById("modal-description");
+        const fullDesc = document.getElementById("modal-full-description");
+        const price = document.getElementById("modal-price");
+
+        modal.style.display = "flex";
+        title.textContent = product.name;
+        image.src = product.image;
+        image.alt = product.name;
+        description.textContent = product.description;
+        fullDesc.textContent = product.fullDescription || ""; // optional
+        price.textContent = product.price;
+      }
+
+      function closeModal() {
+        document.getElementById("product-modal").style.display = "none";
+      }
+    </script>
+  </body>
+</html>

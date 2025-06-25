@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tentang UMKM Kecamatan Rengel</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      body {
+        background: #f9fafb;
+        color: #333;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      ul {
+        list-style: none;
+      }
+
+      /* Header */
+      header {
+        background: #bcbcbc;
+        color: #fff;
+        padding: 0.8rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-text {
+        font-size: 20px;
+        font-weight: bold;
+        color: #2c3e50; /* Ganti warna sesuai keinginan, ini contoh abu gelap */
+      }
+
+      .logo img {
+        height: 40px;
+        margin-right: 10px;
+      }
+
+      nav {
+        display: flex;
+        gap: 2rem;
+      }
+      nav a {
+        color: #fff;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+      nav a:hover,
+      nav a.active {
+        color: #0e0746;
+      }
+
+      /* Hamburger */
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+      }
+      .hamburger div {
+        width: 25px;
+        height: 3px;
+        background: #fff;
+        border-radius: 2px;
+      }
+
+      /* Mobile nav */
+      @media (max-width: 768px) {
+        nav {
+          position: fixed;
+          top: 60px;
+          right: -100%;
+          background: #bcbcbc;
+          height: calc(100vh - 60px);
+          width: 220px;
+          flex-direction: column;
+          padding: 1rem;
+          gap: 1.5rem;
+          transition: right 0.3s ease;
+          border-radius: 0 0 0 10px;
+          z-index: 999;
+        }
+        nav.active {
+          right: 0;
+        }
+        .hamburger {
+          display: flex;
+        }
+      }
+
+      main {
+        padding: 2rem;
+        flex: 1;
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      h1 {
+        color: #131358;
+        margin-bottom: 1rem;
+      }
+
+      /* Card umum untuk deskripsi dan galeri */
+      .card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.5rem 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        user-select: none;
+      }
+
+      /* Teks paragraf dalam card */
+      .card p {
+        font-size: 1rem;
+        line-height: 1.7;
+        margin-bottom: 0;
+      }
+
+      /* Gallery grid dalam card */
+      .gallery {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        margin-top: 1rem;
+      }
+
+      /* Item gallery juga dalam card */
+      .gallery-item {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background: #fff;
+      }
+
+      .gallery-item img,
+      .gallery-item video {
+        width: 100%;
+        display: block;
+        height: auto;
+        border-radius: 10px;
+      }
+
+      /* Footer */
+      footer {
+        background: #bcbcbc;
+        color: #0e0746;
+        text-align: center;
+        padding: 1rem 2rem;
+        font-size: 0.9rem;
+        margin-top: auto;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <img src="img/logo.png" alt="Logo Kecamatan" />
+        <span class="logo-text">UMKM Kecamatan Rengel</span>
+      </div>
+      <nav>
+        <a href="index.html">Produk</a>
+        <a href="about.html" class="active">Tentang</a>
+        <a href="favorit.html">Favorit</a>
+        <a href="kontak.html">Kontak</a>
+      </nav>
+      <div
+        class="hamburger"
+        id="hamburger"
+        aria-label="Toggle menu"
+        role="button"
+        tabindex="0"
+      >
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Card Tentang Kami -->
+      <div class="card">
+        <h1>Tentang Kami</h1>
+        <p>
+          Website ini dibuat sebagai media informasi dan promosi produk-produk
+          unggulan dari pelaku UMKM di Kecamatan Rengel. Tujuan kami adalah
+          membantu masyarakat lokal dalam memperluas pasar serta meningkatkan
+          daya saing produk daerah di era digital.
+        </p>
+        <p>
+          UMKM Kecamatan Rengel terdiri dari berbagai bidang seperti makanan
+          olahan, kerajinan tangan, tekstil, hingga produk herbal. Kami percaya
+          bahwa dengan dukungan teknologi dan kolaborasi, UMKM bisa menjadi
+          tulang punggung ekonomi daerah.
+        </p>
+      </div>
+
+      <!-- Card Galeri -->
+      <div class="card">
+        <h2>Galeri Kegiatan</h2>
+        <div class="gallery">
+          <!-- Gambar -->
+          <div class="gallery-item">
+            <img src="img/umkm1.jpeg" alt="Bazaar UMKM" />
+          </div>
+          <div class="gallery-item">
+            <img src="img/umkm.jpeg" alt="EXPO UMKM" />
+          </div>
+
+          <!-- Video -->
+          <div class="gallery-item">
+            <video controls>
+              <source src="video/kegiatan1.mp4" type="video/mp4" />
+              Browser Anda tidak mendukung pemutaran video.
+            </video>
+          </div>
+          <div class="gallery-item">
+            <video controls>
+              <source src="video/promo1.mp4" type="video/mp4" />
+              Browser Anda tidak mendukung pemutaran video.
+            </video>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>&copy; 2025 UMKM Kecamatan Rengel. All rights reserved.</footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const hamburger = document.getElementById("hamburger");
+        const nav = document.querySelector("nav");
+
+        hamburger.addEventListener("click", () => {
+          nav.classList.toggle("active");
+        });
+      });
+    </script>
+  </body>
+</html>
